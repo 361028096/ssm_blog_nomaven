@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.run.dao.TestDao">
+    <select id="selectAll" resultType="com.run.entity.Test">
+        SELECT ID,NAME FROM test
+    </select>
+
+    <insert id="insertItem" parameterType="com.run.entity.Test">
+        INSERT INTO TEST(ID,NAME) VALUES (#{id},#{name})
+    </insert>
+</mapper>
