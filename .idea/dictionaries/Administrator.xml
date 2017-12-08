@@ -2,6 +2,7 @@
   <dictionary name="Administrator">
     <words>
       <w>jstl</w>
+      <w>rowbounds</w>
       <w>springmvc</w>
     </words>
   </dictionary>

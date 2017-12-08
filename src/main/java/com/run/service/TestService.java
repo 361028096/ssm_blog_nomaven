@@ -8,4 +8,10 @@ public interface TestService {
     public List<Test> selectAll() throws Exception;
 
     public void insertItem(Test test) throws Exception;
+
+    public void testInnerService();
+
+//    public List<Test> testRowbounds() throws Exception;
+
+
 }
