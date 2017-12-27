@@ -6,7 +6,12 @@ import com.run.entity.TestExample;
 import com.run.service.TestService;
 import com.run.service.UserService;
 import com.run.utils.DatetimeUtil;
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.log4j.Logger;
+import org.apache.log4j.spi.LoggerFactory;
+import org.dozer.Mapper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.CannotLoadBeanClassException;
@@ -15,9 +20,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.interceptor.TransactionAspectSupport;
 import sun.java2d.pipe.SpanShapeRenderer;
 
+import javax.sound.midi.Soundbank;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -291,6 +297,8 @@ public class MainTest {
     public void testBigDecimal() {
         BigDecimal bd1 = new BigDecimal(0);
         System.out.println(bd1.equals(new BigDecimal(0)));
+//        BigDecimal bd2 = new BigDecimal(null);
+//        System.out.println(bd2);
     }
 
     @Test
@@ -586,6 +594,278 @@ public class MainTest {
         System.out.println(reason1.contains(":"));
     }
 
+    @Test
+    public void saveSelect () {
+        try{
 
+
+        List<com.run.entity.Test> testList = testMapper.selectByExample(new TestExample());
+        TestExample testExample = new TestExample();
+        TestExample.Criteria testExampleCriteria = testExample.createCriteria();
+        testExampleCriteria.andIdEqualTo("3");
+
+        com.run.entity.Test test =  new com.run.entity.Test();
+        test.setInstalment(5);
+        testMapper.updateByExampleSelective(test,testExample);
+        System.out.println("更新期数为5 完成");
+
+        List<com.run.entity.Test> testResult = testMapper.selectByExample(testExample);
+        System.out.print("查询：");
+        System.out.println(testResult.get(0).getInstalment());
+
+        test.setInstalment(6);
+        testMapper.updateByExampleSelective(test,testExample);
+        System.out.println("更新期数为6 完成");
+        testResult = testMapper.selectByExample(testExample);
+        System.out.print("查询：");
+        System.out.println(testResult.get(0).getInstalment());
+
+        test.setInstalment(5);
+        testMapper.updateByExampleSelective(test,testExample);
+        System.out.println("更新期数为5 完成");
+        testResult = testMapper.selectByExample(testExample);
+        System.out.print("查询：");
+        System.out.println(testResult.get(0).getInstalment());
+
+        test.setInstalment(6);
+        testMapper.updateByExampleSelective(test,testExample);
+        System.out.println("更新期数为6 完成");
+        testResult = testMapper.selectByExample(testExample);
+        System.out.print("查询：");
+        System.out.println(testResult.get(0).getInstalment());
+
+        throw new Exception();
+        } catch (Exception e) {
+            TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Test
+    public void testNull1(){
+        com.run.entity.Test test = (com.run.entity.Test) null;
+        if(null == test){
+            System.out.println(true);
+        }
+        System.out.println(1);
+    }
+
+    @Test
+    public void testListSize() {
+        List<Integer> integerList = new ArrayList<>();
+        integerList.add(1);
+        integerList.add(2);
+        System.out.println(integerList.get(integerList.size()-1));
+    }
+
+    @Test
+    public void testMapDate() {
+        Map<String,Date> map = new HashMap<>();
+        map.put("1",new Date());
+        Date result = map.get("1");
+        System.out.println(result);
+
+    }
+
+    @Test
+    public void testTenMinAgo() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        Date now = new Date();
+        Calendar rightNow = Calendar.getInstance();
+        rightNow.setTime(now);
+        rightNow.add(Calendar.MINUTE,-10);
+
+        Date tenMinAgo = rightNow.getTime();
+        System.out.println(sdf.format(now));
+        System.out.println(sdf.format(tenMinAgo));
+        rightNow.add(Calendar.MINUTE,-60);
+        Date seventyMinAgo = rightNow.getTime();
+        System.out.println(sdf.format(seventyMinAgo));
+    }
+    @Test
+    public void testTwoDaysAgo() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+        Date now = new Date();
+        Calendar rightNow = Calendar.getInstance();
+        rightNow.setTime(now);
+        // 将时分秒,毫秒域清零
+        rightNow.set(Calendar.HOUR_OF_DAY, 0);
+        rightNow.set(Calendar.MINUTE, 0);
+        rightNow.set(Calendar.SECOND, 0);
+        rightNow.set(Calendar.MILLISECOND, 0);
+
+        System.out.println(sdf.format(rightNow.getTime()));
+        System.out.println(rightNow.get(Calendar.MONTH));
+        System.out.println(rightNow.get(Calendar.DAY_OF_MONTH));
+    }
+
+
+    @Test
+    public void betweenTwoDate() {
+        try{
+            // 当前日期
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Date nowDate = sdf.parse("20171207");
+            Calendar nowCal = Calendar.getInstance();
+            nowCal.setTime(nowDate);
+            // 将时分秒,毫秒域清零
+            nowCal.set(Calendar.HOUR_OF_DAY, 0);
+            nowCal.set(Calendar.MINUTE, 0);
+            nowCal.set(Calendar.SECOND, 0);
+            nowCal.set(Calendar.MILLISECOND, 0);
+            nowDate = nowCal.getTime();
+            Date lendingDate = sdf.parse("20171201");
+            Calendar lendingDateCal = Calendar.getInstance();
+            lendingDateCal.setTime(lendingDate);
+            lendingDateCal.add(Calendar.DATE,6);
+            Date lendingDateAddSixDays = lendingDateCal.getTime();
+            long dayCounts = DatetimeUtil.getDistinceDay(lendingDateAddSixDays, nowDate);
+            System.out.println(dayCounts);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testTwoDays () {
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            // 判断应还日期
+            // 当前日期
+            Date nowDate = sdf.parse("20171216");
+            Calendar nowCal = Calendar.getInstance();
+            nowCal.setTime(nowDate);
+            // 将时分秒,毫秒域清零
+            nowCal.set(Calendar.HOUR_OF_DAY, 0);
+            nowCal.set(Calendar.MINUTE, 0);
+            nowCal.set(Calendar.SECOND, 0);
+            nowCal.set(Calendar.MILLISECOND, 0);
+            // 应还日期
+            Date dueDate = sdf.parse("20171217");
+            Calendar dueDateCalendar = Calendar.getInstance();
+            dueDateCalendar.setTime(dueDate);
+
+            long dayCounts = DatetimeUtil.getDistinceDay(nowDate,dueDate);
+            System.out.println(dayCounts);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testFor () {
+//        List<Integer> nullList = null;
+//        List<Integer> newList = new ArrayList<>();
+//        for(Integer i : nullList) {
+//            System.out.println(i);
+//        }
+
+        TestExample testExample = new TestExample();
+        TestExample.Criteria criteria = testExample.createCriteria();
+        criteria.andIdEqualTo("7");
+        List<com.run.entity.Test> testList = testMapper.selectByExample(testExample);
+        System.out.println(testList == null);
+        for (com.run.entity.Test test : testList) {
+            System.out.println("aaaaaaaaaaa"+test);
+        }
+        System.out.println(testList.size());
+    }
+
+    @Test
+    public void testIsEmpty() {
+        List<Integer> list = new ArrayList<>();
+        list.isEmpty();
+        list.add(1);
+        System.out.println(list.toString());
+    }
+
+    @Test
+    public void testLong () {
+        Long testLong = 0L;
+        System.out.println(testLong.equals(0L));
+    }
+
+    @Test
+    public void testBigLong() {
+        Long testLong = 1L;
+        System.out.println(testLong.equals(1));
+    }
+
+
+    @Test
+    public void testyears() {
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            // 判断应还日期
+            // 当前日期
+            Date nowDate = sdf.parse("20171216");
+            Calendar nowCal = Calendar.getInstance();
+            nowCal.setTime(nowDate);
+            nowCal.add(Calendar.DAY_OF_MONTH,365);
+            // 将时分秒,毫秒域清零
+            nowCal.set(Calendar.HOUR_OF_DAY, 0);
+            nowCal.set(Calendar.MINUTE, 0);
+            nowCal.set(Calendar.SECOND, 0);
+            nowCal.set(Calendar.MILLISECOND, 0);
+            System.out.println(sdf.format(nowCal.getTime()));
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void compere(){
+        try{
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+            Date nowDate = sdf.parse("20171227");
+            Calendar nowCal = Calendar.getInstance();
+            nowCal.setTime(nowDate);
+            nowCal.add(Calendar.DAY_OF_MONTH,365);
+            // 将时分秒,毫秒域清零
+            nowCal.set(Calendar.HOUR_OF_DAY, 0);
+            nowCal.set(Calendar.MINUTE, 0);
+            nowCal.set(Calendar.SECOND, 0);
+            nowCal.set(Calendar.MILLISECOND, 0);
+            System.out.println(sdf.format(nowCal.getTime()));
+
+            int result =  DateUtils.truncatedCompareTo(new Date(), nowCal.getTime(), Calendar.DATE);
+            int result2 =  DateUtils.truncatedCompareTo(nowCal.getTime(),new Date(),  Calendar.DATE);
+            System.out.println(result);
+            System.out.println(result2);
+
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Test
+    public void testUtils() {
+        // DateUtils
+        Date validStartDate = DateUtils.addDays(new Date(), 1);
+        int result = DateUtils.truncatedCompareTo(new Date(), validStartDate, Calendar.DATE);
+        System.out.println("CASE 1: 起租日：今天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), -10), validStartDate, Calendar.DATE);
+        System.out.println("CASE 2: 起租日：今天-10天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), -11), validStartDate, Calendar.DATE);
+        System.out.println("CASE 3: 起租日：今天-11天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), -17), validStartDate, Calendar.DATE);
+        System.out.println("CASE 4: 起租日：今天-17天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), -9), validStartDate, Calendar.DATE);
+        System.out.println("CASE 5: 起租日：今天-9天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), +2), validStartDate, Calendar.DATE);
+        System.out.println("CASE 6: 起租日：今天+2天，" +  result);
+
+        result = DateUtils.truncatedCompareTo(DateUtils.addDays(new Date(), +12), validStartDate, Calendar.DATE);
+        System.out.println("CASE 7: 起租日：今天+12天，" +  result);
+
+    }
 
 }

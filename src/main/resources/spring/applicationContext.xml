@@ -3,7 +3,8 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:task="http://www.springframework.org/schema/task"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/task
@@ -11,11 +12,14 @@
        http://www.springframework.org/schema/mvc
        http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
        http://www.springframework.org/schema/context
-       http://www.springframework.org/schema/context/spring-context.xsd">
+       http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
 
     <!-- 扫描service及dao -->
     <context:component-scan base-package="com.**.dao" />
     <context:component-scan base-package="com.**.service" />
+    <context:component-scan base-package="com.**.dto" />
 
     <!-- 我们的异步事件配置，非常简单 -->
     <!--开启注解调度支持 @Async @Scheduled-->
@@ -68,9 +72,14 @@
 
 
     <!-- 在spring容器中注册事件监听器，
-应用上下文将会识别实现了ApplicationListener接口的Bean,
-并在特定时刻将所有的事件通知它们 -->
+        应用上下文将会识别实现了ApplicationListener接口的Bean,
+        并在特定时刻将所有的事件通知它们 -->
     <bean id="registerListener" class="com.run.listener.RegisterListener" />
     <!-- 注册我们的发布者，后面测试用到 -->
     <bean id="userService" class="com.run.service.UserService" />
+
+
+    <import resource="classpath*:/dozer/applicationContext-dozer.xml"/>
+
+
 </beans>
