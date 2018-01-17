@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -19,23 +20,22 @@ import java.util.Date;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:/spring/applicationContext.xml"})
 public class DozerTest {
-//    @Autowired
-//    private Mapper mapper;
-//
-//    @Test
-//    public void testDozerTest() {
-//        TestAttributeOne one = new TestAttributeOne();
-//        TestAttributeTwo two = new TestAttributeTwo();
-//        one.setId("1");
-//        one.setDueTime(new Date());
-//        one.setInstalment(1);
-//        two = mapper.map(one,TestAttributeTwo.class);
-//        System.out.println(JSON.toJSONString(two));
-//    }
-//
-//    @Test
-//    public void testSout () {
-//        System.out.println("******************************************");
-//    }
+    @Resource
+    private Mapper mapper;
+
+    public void testDozerTest() {
+        TestAttributeOne one = new TestAttributeOne();
+        TestAttributeTwo two = new TestAttributeTwo();
+        one.setId("1");
+        one.setDueTime(new Date());
+        one.setInstalment(1);
+        two = mapper.map(one,TestAttributeTwo.class);
+        System.out.println(JSON.toJSONString(two));
+    }
+
+    @Test
+    public void testSout () {
+        System.out.println("******************************************");
+    }
 
 }

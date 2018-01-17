@@ -79,7 +79,7 @@
     <bean id="userService" class="com.run.service.UserService" />
 
 
-    <import resource="classpath*:/dozer/applicationContext-dozer.xml"/>
+    <!--<import resource="classpath*:/dozer/applicationContext-dozer.xml"/>-->
 
 
 </beans>

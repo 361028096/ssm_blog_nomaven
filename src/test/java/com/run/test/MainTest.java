@@ -7,6 +7,7 @@ import com.run.service.TestService;
 import com.run.service.UserService;
 import com.run.utils.DatetimeUtil;
 import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.log4j.Logger;
@@ -545,7 +546,7 @@ public class MainTest {
     public void testUpdate() {
         TestExample example = new TestExample();
         TestExample.Criteria criteria = example.createCriteria();
-        criteria.andIdEqualTo("1");
+        criteria.andIdEqualTo("2333");
         com.run.entity.Test test = new com.run.entity.Test();
         test.setName("haha");
         test.setDueTime(new Date());
@@ -823,7 +824,7 @@ public class MainTest {
             Date nowDate = sdf.parse("20171227");
             Calendar nowCal = Calendar.getInstance();
             nowCal.setTime(nowDate);
-            nowCal.add(Calendar.DAY_OF_MONTH,365);
+//            nowCal.add(Calendar.DAY_OF_MONTH,365);
             // 将时分秒,毫秒域清零
             nowCal.set(Calendar.HOUR_OF_DAY, 0);
             nowCal.set(Calendar.MINUTE, 0);
@@ -868,4 +869,169 @@ public class MainTest {
 
     }
 
+    @Test
+    public void testStringUtils() {
+        StringUtils.defaultString("aaa");
+    }
+
+    @Test
+    public void testException() {
+        try{
+            throw new NullPointerException();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println("a");
+    }
+
+    @Test
+    public void testString23() {
+        System.out.println(JSON.toJSONString(null));
+    }
+
+    @Test
+    public void testGetSize () {
+        List<Integer> testList = null;
+        System.out.println(testList.size());
+    }
+
+    @Test
+    public void testDouble () {
+        double d = 0;
+        System.out.println(d == 0);
+        Date date = new Date();
+        System.out.println(JSON.toJSONString(date));
+        System.out.println(System.currentTimeMillis());
+    }
+
+    @Test
+    public void testForEach() {
+        List<com.run.entity.Test> list = new ArrayList<>();
+        for(com.run.entity.Test test : list) {
+            System.out.println("aaaaaaaaaaaaaaaaaaa");
+            System.out.println(test.getId());
+        }
+    }
+
+    @Test
+    public void testDateUtils() {
+        Date now = new Date();
+        Date nowAddOne = DateUtils.addDays(now,1);
+        System.out.println(DateUtils.truncatedCompareTo(now,nowAddOne,Calendar.DATE));
+        System.out.println(now);
+    }
+
+    @Test
+    public void testIntegerToString() {
+        Integer a = 3;
+        System.out.println(String.valueOf(a));
+    }
+
+    @Test
+    public void testDecimalDiv() {
+        BigDecimal a = new BigDecimal(10);
+        BigDecimal rate = a.divide(new BigDecimal(100)).setScale(5,BigDecimal.ROUND_UP);
+        System.out.println(String.valueOf(rate));
+
+    }
+
+    @Test
+    public void testTest () {
+        List<com.run.entity.Test> testList = testMapper.selectByExample(new TestExample());
+        System.out.println(testList.toString());
+
+        com.run.entity.Test test  = new com.run.entity.Test();
+        test.setName("hewei");
+        System.out.println(JSON.toJSONString(test.getName()));
+    }
+    @Test
+    public void testEqual() {
+        System.out.println(3 == 3);
+    }
+
+    @Test
+    public void testMap2(){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("result",true);
+        Boolean result = (Boolean) resultMap.get("result");
+        System.out.println(result);
+
+    }
+
+    @Test
+    public void testOverDue() {
+        try{
+            Date nowDate = DateUtils.truncate(new Date(),Calendar.DATE);
+            Date instalmentEnd = DateUtils.truncate(DateUtils.addDays(new Date(), -1),Calendar.DATE);
+            long overdueDays = DatetimeUtil.getDistinceDay(instalmentEnd, nowDate);
+            System.out.println(overdueDays);
+        } catch (Exception e) {
+
+        }
+    }
+
+    @Test
+    public void testTry() {
+        try {
+            System.out.println("aaa");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testUpdateName() {
+        TestExample testExample = new TestExample();
+        TestExample.Criteria testExampleCriteria = testExample.createCriteria();
+        testExampleCriteria.andIdEqualTo("1");
+        com.run.entity.Test test = new com.run.entity.Test();
+        test.setName("贺炜");
+        testMapper.updateByExampleSelective(test,testExample);
+        System.out.println("success..");
+    }
+
+
+    @Test
+    public void testMonth() {
+        Date date1 = new Date();
+        System.out.println(DateUtils.addDays(date1,19));
+        Date date2 = DateUtils.truncate(DateUtils.addDays(date1,19),Calendar.DATE);
+
+        Calendar startCalendar = new GregorianCalendar();
+        startCalendar.setTime(date1);
+        Calendar endCalendar = new GregorianCalendar();
+        endCalendar.setTime(date2);
+
+        int diffYear = endCalendar.get(Calendar.YEAR) - startCalendar.get(Calendar.YEAR);
+        int diffMonth = diffYear * 12 + endCalendar.get(Calendar.MONTH) - startCalendar.get(Calendar.MONTH);
+        System.out.println(diffMonth);
+    }
+
+//    @Test
+//     public long getDistanceMonth(Date before, Date after)
+//            throws Exception {
+//        long monthCount = 0;
+//        Map<String, Object> test = new HashMap<>();
+//        return monthCount;
+//    }
+
+    @Test
+    public void testStatus () {
+        List<String> idList = new ArrayList<>();
+        idList.add("1");
+        idList.add("2");
+
+        TestExample testExample = new TestExample();
+        TestExample.Criteria testExampleCriteria = testExample.createCriteria();
+        testExampleCriteria.andIdIn(idList);
+        testExampleCriteria.andIdNotEqualTo("2");
+        List<com.run.entity.Test> testList = testMapper.selectByExample(testExample);
+        System.out.println(JSON.toJSONString(testList));
+    }
+
+    @Test
+    public void testest() {
+        System.out.println(JSON.toJSONString(null));
+    }
 }
+
